@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{.Values.msName}}
+  name: {{.Values.msName}}
+spec:
+  ports:
+  - name: 80-{{.Values.envoyPort}}
+    port: 80
+    protocol: TCP
+    targetPort: {{.Values.envoyPort}}
+  selector:
+    app: {{.Values.msName}}
+  sessionAffinity: None
+  type: LoadBalancer

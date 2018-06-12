@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: {{required "A valid .Values.msName entry required!" .Values.msName | quote}}
+  name: {{.Values.msName}}
+spec:
+  replicas: {{.Values.minReplicas}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.msName}}
+    spec:
+      containers:
+      - image: docker.io/jarodriguezparadigma/envoy:1.0
+        imagePullPolicy: Always
+        name: envoy
+        ports:
+        - containerPort: {{.Values.envoyPort}}
+          protocol: TCP
+        env:
+        - name: ENVOY_CONFIG_PATH
+          value: /temp/config/envoy.yaml
+        resources: {}
+        stdin: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        tty: true
+        volumeMounts:
+        - mountPath: /temp/config
+          name: config
+      - image: {{required "A valid .Values.appDockerImage entry required!" .Values.appDockerImage | quote}}
+        imagePullPolicy: Always
+        name: {{.Values.msName}}
+        ports:
+        - containerPort: {{.Values.appPort}}
+          protocol: TCP
+        resources: {}
+        stdin: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        tty: true
+      volumes:
+      - configMap:
+          items:
+          - key: envoy_config.yaml
+            path: envoy.yaml
+          name: {{.Values.msName}}
+        name: config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange
