@@ -3,6 +3,7 @@ kind: Service
 metadata:
   labels:
     app: {{.Values.msName}}
+    chart: {{.Chart.Name}}-{{.Chart.Version}}
   name: {{.Values.msName}}
 spec:
   ports:

@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: {{required "A valid .Values.msName entry required!" .Values.msName | quote}}
+    chart: {{.Chart.Name}}-{{.Chart.Version}}
   name: {{.Values.msName}}
 spec:
   replicas: {{.Values.minReplicas}}
