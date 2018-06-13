@@ -7,4 +7,4 @@ metadata:
   name: {{.Values.msName}}
 data:
   envoy_config.yaml: |
-{{.Files.Get "envoy_config.yaml"}}
+{{.Files.Get "envoy_config.yaml" | indent 4}}
